@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# don't do anything with the build directories
+build_nrf5340dk_nrf5340_cpuapp/*
+build_nrf5340dk_nrf5340_cpuappns/*

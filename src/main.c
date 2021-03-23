@@ -58,7 +58,7 @@ void main(void)
 
 	app_ble_start_advertising();
 
-	printk("Advertising started\n");
+	printk("pulcher Advertising started\n");
 
 	gui_set_bt_state(GUI_BT_STATE_ADVERTISING);
 
