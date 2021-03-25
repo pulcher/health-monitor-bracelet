@@ -67,8 +67,8 @@
 #endif
 
 
-class DFRobot_MAX30102
-{
+//class DFRobot_MAX30102
+//{
 //Configuration Options 
 //FIFO Configuration(Register address 0x08)
 //sampleAverage(Table 3. Sample Averaging)
@@ -111,7 +111,7 @@ class DFRobot_MAX30102
 #define SLOT_RED_LED    1
 #define SLOT_IR_LED     2
 
-public:
+//public:
   /*
     Interrupt Status(0x00–0x01) (pg 12)
     * ------------------------------------------------------------------------------------------
@@ -225,12 +225,12 @@ public:
     uint8_t tail;
   } sSenseBuf_t;
 
-public:
+//public:
 
   /*!
    *@brief Constructor 
    */
-  DFRobot_MAX30102(void);
+//  DFRobot_MAX30102(void);
 
   /*!
    *@brief Init sensor 
@@ -238,7 +238,7 @@ public:
    *@param i2cAddr Chip IIC address (0x57 in default)
    *@return true or false
    */
-  bool begin(TwoWire *pWire = &Wire, uint8_t i2cAddr = MAX30102_IIC_ADDRESS);
+//  bool begin(TwoWire *pWire = &Wire, uint8_t i2cAddr = MAX30102_IIC_ADDRESS);
 
   /*!
    *@brief Use macro definition to configure sensor 
@@ -249,34 +249,34 @@ public:
    *@param pulseWidth Pulse width: the longer the pulse width, the wider the detection range. Default to be Max range 
    *@param adcRange ADCMeasurement Range, default 4096 (nA)，15.63(pA) per LSB
    */
-  void sensorConfiguration(uint8_t ledBrightness = 0x1F, uint8_t sampleAverage = SAMPLEAVG_4, \
-                           uint8_t ledMode = MODE_MULTILED, uint8_t sampleRate = SAMPLERATE_400, \
-                           uint8_t pulseWidth = PULSEWIDTH_411, uint8_t adcRange = ADCRANGE_4096);
+ // void sensorConfiguration(uint8_t ledBrightness = 0x1F, uint8_t sampleAverage = SAMPLEAVG_4, \
+   //                        uint8_t ledMode = MODE_MULTILED, uint8_t sampleRate = SAMPLERATE_400, \
+     //                      uint8_t pulseWidth = PULSEWIDTH_411, uint8_t adcRange = ADCRANGE_4096);
 
   
   /*!
    *@brief get red value
    *@return Red light reading
    */
-  uint32_t getRed(void);
+ // uint32_t getRed(void);
 
   /*!
    *@brief Get IR value 
    *@return IR reading
    */
-  uint32_t getIR(void);
+//  uint32_t getIR(void);
 
   /*!
    *@brief Get module temperature in unit °C
    *@return Float temperature
    */
-  float readTemperatureC();
+//  float readTemperatureC();
 
   /*!
    *@brief  Get module temperature in unit ℉
    *@return Float temperature
    */
-  float readTemperatureF();
+//  float readTemperatureF();
 
   /*!
    *@brief Calculate heart rate and SPO2 
@@ -285,82 +285,82 @@ public:
    *@param *heartRate             [out]Calculated heart-rate
    *@param *heartRateValid        [out]If the calculated heart-rate is valid, the value is 1
    */
-  void heartrateAndOxygenSaturation(int32_t* SPO2,int8_t* SPO2Valid,int32_t* heartRate,int8_t* heartRateValid);
+//  void heartrateAndOxygenSaturation(int32_t* SPO2,int8_t* SPO2Valid,int32_t* heartRate,int8_t* heartRateValid);
 
-private:
+//private:
   
   /*!
    *@brief Reset all configuration, threshold, and data regsiter. When reset completed, auto reset the reset bit
    */
-  void softReset();
+//  void softReset();
 
   /*!
    *@brief Enter power-saving mode. In this mode, all registers keep their values, and read and write normally, clear all interrupts to 0. 
    */
-  void shutDown();
+//  void shutDown();
 
   /*!
    *@brief Wake-up mode, work normally 
    */
-  void wakeUp();
+//  void wakeUp();
 
   /*!
    *@brief Set LED mode 
    *@param mode Configure the mode by the macro definition with LEDMode comment 
    */
-  void setLEDMode(uint8_t mode);
+//  void setLEDMode(uint8_t mode);
   
   /*!
    *@brief Set ADC measurement range, default 4096 (nA)，15.63(pA) per LSB
    *@param adcRange Configure ADC measuring range by the macro definition with adcRange comment
    */
-  void setADCRange(uint8_t adcRange);
+//  void setADCRange(uint8_t adcRange);
 
   /*!
    *@brief Set sampling rate 
    *@param sampleRate Configure sampling rate by the macro definition with sampleRate comment 
    */
-  void setSampleRate(uint8_t sampleRate);
+//  void setSampleRate(uint8_t sampleRate);
 
   /*!
    *@brief Set pulse width, the longer the pulse width, the wider the detection range 
    *@param pulseWidth Configure pulse width by the macro defintion with pulseWidth comment
    */
-  void setPulseWidth(uint8_t pulseWidth);
+//  void setPulseWidth(uint8_t pulseWidth);
 
   /*!
    *@brief Set brightness of red light 
    *@param amplitude Amplitude: 0x00 = 0mA, 0x7F = 25.4mA, 0xFF = 50mA
    */
-  void setPulseAmplitudeRed(uint8_t amplitude);
+//  void setPulseAmplitudeRed(uint8_t amplitude);
 
   /*!
    *@brief Set IR brightness 
    *@param amplitude Amplitude: 0x00 = 0mA, 0x7F = 25.4mA, 0xFF = 50mA
    */
-  void setPulseAmplitudeIR(uint8_t amplitude);
+//  void setPulseAmplitudeIR(uint8_t amplitude);
 
   /*!
    *@brief Configure led device according to the given number, 4 timeslot in total. We will only use slot1 and slot2. There are red light and IR light 
    *@param slotNumber Slot Number, can be 1, 2
    *@param device LED Device name：SLOT_RED_LED or SLOT_IR_LED
    */
-  void enableSlot(uint8_t slotNumber, uint8_t device);
+//  void enableSlot(uint8_t slotNumber, uint8_t device);
 
   /*!
    *@brief Disable all slots 
    */
-  void disableAllSlots(void);
+//  void disableAllSlots(void);
 
   /*!
    *@brief Enable FIFO Almost Full Flag. This interrupt is triggered when FIFO write pointer has a certian amount of free space.
    */
-  void enableAlmostFull(void);
+//  void enableAlmostFull(void);
 
   /*!
    *@brief Disable FIFO Almost Full Flag
    */
-  void disableAlmostFull(void);
+//  void disableAlmostFull(void);
 
   /*!
    *@brief Enable New FIFO Data Ready. This interrupt is triggered when there is a new sample in data FIFO
@@ -370,86 +370,86 @@ private:
   /*!
    *@brief Disable New FIFO Data Ready
    */
-  void disableDataReady(void);
+//  void disableDataReady(void);
 
   /*!
    *@brief Enable Ambient Light Cancellation Overflow. This interrupt is triggered when the ambient light cancellation function of SpO2/HR photodiode reaches the maximum
    */
-  void enableALCOverflow(void);
+//  void enableALCOverflow(void);
 
   /*!
    *@brief Disable Ambient Light Cancellation Overflow
    */
-  void disableALCOverflow(void);
+//  void disableALCOverflow(void);
 
   /*!
    *@brief Enable Internal Temperature Ready Flag. This interrupt is triggered when the internal mold temperature conversion is done.
    */
-  void enableDieTempReady(void);
+//  void enableDieTempReady(void);
 
   /*!
    *@brief Disable Internal Temperature Ready Flag
    */
-  void disableDieTempReady(void);
+//  void disableDieTempReady(void);
 
   /*!
    *@brief Set sample average. The sensor will send the average of multiple samples
    *@param samples Averaged sample. Configure it by the macro definition with the comment sampleAverage 
    */
-  void setFIFOAverage(uint8_t samples);
+//  void setFIFOAverage(uint8_t samples);
 
   /*!
    *@brief Enable FIFO Rolls on Full. If the FIFO is full, the FIFO address will return to 0 and FIFO will continue to fill in with new data.
    */
-  void enableFIFORollover();
+//  void enableFIFORollover();
 
   /*!
    *@brief Disable FIFO Rolls on Full. New sample will be lost if FIFO is full.
    */
-  void disableFIFORollover();
+//  void disableFIFORollover();
 
   /*!
    *@brief Specify the size of free space. After enabling interrupt, the "almost full" interrupt will be triggered when the set size is reached.
    *@param numberOfSamples The size of free sample space. Trigger the interrupt when free samples reached this value. 
    *@ If set to 2, the interrupt will be triggered by filling in 30 samples. If set to 0, that will be triggered in 32 samples.
    */
-  void setFIFOAlmostFull(uint8_t numberOfSamples);
+//  void setFIFOAlmostFull(uint8_t numberOfSamples);
 
   /*!
    *@brief Read chip ID
    */
-  uint8_t getPartID();
+//  uint8_t getPartID();
 
   /*!
    *@brief Get FIFO write pointer 
    *@return Write pointer 
    */
-  uint8_t getWritePointer(void);
+//  uint8_t getWritePointer(void);
 
   /*!
    *@brief Get FIFO read pointer 
    *@return Read pointer 
    */
-  uint8_t getReadPointer(void);
+//  uint8_t getReadPointer(void);
 
   /*!
    *@brief Reset FIFO
    */
-  void resetFIFO(void);
+//  void resetFIFO(void);
 
   /*!
    *@brief Read new data and save it in consctructor buffer 
    */
-  void getNewData(void);
+//  void getNewData(void);
 
-  void writeReg(uint8_t reg, const void* pBuf, uint8_t size);
-  uint8_t readReg(uint8_t reg, const void* pBuf, uint8_t size);
+//  void writeReg(uint8_t reg, const void* pBuf, uint8_t size);
+//  uint8_t readReg(uint8_t reg, const void* pBuf, uint8_t size);
 
-private:
-  TwoWire *_pWire;
-  uint8_t _i2cAddr;
-  uint8_t _activeLEDs;
-  sSenseBuf_t senseBuf;//Buffer for storing multiple groups of array
-};
+//private:
+//  TwoWire *_pWire;
+//  uint8_t _i2cAddr;
+//  uint8_t _activeLEDs;
+//  sSenseBuf_t senseBuf;//Buffer for storing multiple groups of array
+//};
 
 #endif
