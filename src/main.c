@@ -12,6 +12,7 @@
 #include <zephyr.h>
 #include "gui.h"
 #include "app_ble.h"
+#include "DFRobot_MAX30102.h"
 #include <drivers/i2c.h>
 
 #define LOG_LEVEL CONFIG_LOG_DEFAULT_LEVEL
