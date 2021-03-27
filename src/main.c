@@ -12,8 +12,9 @@
 #include <zephyr.h>
 #include "gui.h"
 #include "app_ble.h"
-#include "DFRobot_MAX30102.h"
 #include <drivers/i2c.h>
+#include "max30102.h"
+
 
 #define LOG_LEVEL CONFIG_LOG_DEFAULT_LEVEL
 #include <logging/log.h>
@@ -54,7 +55,7 @@ void on_gui_event(gui_event_t *event)
 
 void main(void)
 {
-        const struct device *i2c_dev;
+    const struct device *i2c_dev;
 	uint8_t cmp_data[16];
 	uint8_t data[16];
 	int i, ret;
@@ -64,6 +65,13 @@ void main(void)
 		printk("I2C: Device driver not found.\n");
 		return;
 	}
+
+        if (!is_max30102_available(i2c_dev)) {
+          printk("I2C: MAX30102 not found.\n");
+          return;          
+        }
+
+        printk("Located MAX30102...\n");
 
 	uint8_t error = 0u;
 
@@ -94,7 +102,7 @@ void main(void)
           uint8_t error;
           int nDevices;
  
-          printk("Scanning...\n");
+ /*         printk("Scanning...\n");
  
           nDevices = 0;
           for(uint16_t address = 80; address < 90; address++ ) 
@@ -124,14 +132,14 @@ void main(void)
                 printk("0");
               printk(address);
             }    */
-            printk("  !\n");
+ /*           printk("  !\n");
           }
           
           if (nDevices == 0)
             printk("No I2C devices found\n");
           else
             printk("done\n");
- 
+ */
           k_sleep(K_MSEC(3000));
 	}
 }
