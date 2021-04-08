@@ -66,25 +66,21 @@ void main(void)
 		return;
 	}
 
-        if (!is_max30102_available(i2c_dev)) {
-          printk("I2C: MAX30102 not found.\n");
-          return;          
-        }
+	if (!is_max30102_available(i2c_dev)) {
+		printk("I2C: MAX30102 not found.\n");
+		return;          
+	}
 
-        printk("Located MAX30102...\n");
+  	if (get_max30102_part_id(i2c_dev) != MAX30102_EXPECTED_PARTID) {
+    	printk("not expected partid");
+    	return;
+  	}
+
+	printk("Located MAX30102...\n");
 
 	uint8_t error = 0u;
 
 	i2c_configure(i2c_dev, I2C_SPEED_SET(I2C_SPEED_STANDARD));
-
-/*	printk("Value of NRF_TWIM3_NS->PSEL.SCL: %ld \n",NRF_TWIM3_NS->PSEL.SCL);
-	printk("Value of NRF_TWIM3_NS->PSEL.SDA: %ld \n",NRF_TWIM3_NS->PSEL.SDA);
-	printk("Value of NRF_TWIM3_NS->FREQUENCY: %ld \n",NRF_TWIM3_NS->FREQUENCY);
-	printk("26738688 -> 100k\n");
-*/
-	
-
-
 
 	gui_config_t gui_config = {.event_callback = on_gui_event};
 	gui_init(&gui_config);

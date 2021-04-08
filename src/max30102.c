@@ -14,6 +14,8 @@ struct i2c_msg msgs[1];
 uint8_t dst = 1;
 uint8_t error = -1;
 
+// methods
+uint8_t max30102_read_reg(struct device *i2c_dev, uint8_t reg, void* pBuf, uint8_t size);
 
 bool is_max30102_available(struct device *i2c_dev) {
 
@@ -25,3 +27,30 @@ bool is_max30102_available(struct device *i2c_dev) {
     
     return error == 0;
 }
+
+uint8_t get_max30102_part_id(struct device *i2c_dev)
+{
+  uint8_t byteTemp, error;
+  error = max30102_write_read_reg(i2c_dev, MAX30102_PARTID, &byteTemp, 1);
+  return byteTemp;
+}
+
+
+
+
+
+
+// Utilities
+
+uint8_t max30102_write_read_reg(struct device *i2c_dev, uint8_t reg, void* pBuf, uint8_t size)
+{
+    int error;
+    error = i2c_write_read(i2c_dev, MAX30102_IIC_ADDRESS, &reg, 1, pBuf, size);
+
+    if (error) {
+        printk("ERROR: couldn't communicate with max30102: %d", error);
+    }
+
+    return error;
+}
+
