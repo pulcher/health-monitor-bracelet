@@ -15,6 +15,9 @@ Using stuff from the the Arduino C++ Library for the MAX30102
 #define MAX30102_FIFOCONFIG 0x08 //FIFO Configuration
 #define MAX30102_MODECONFIG 0x09 //Mode Configuration
 #define MAX30102_PARTICLECONFIG 0x0A //SpO2 Configuration
+#define MAX30102_LED1_PULSEAMP 0x0C //LED1 Pulse Amplitude
+#define MAX30102_LED2_PULSEAMP 0x0D //LED2 Pulse Amplitude
+#define MAX30102_MULTILEDCONFIG1 0x11 //Multi-LED Mode Control Registers
 
 //Part ID Registers
 #define MAX30102_REVISIONID 0xFE //Revision ID
@@ -48,6 +51,32 @@ uint8_t   pulseWidth:2;
 uint8_t   sampleRate:3;
 uint8_t   adcRange:3;
 } __attribute__ ((packed)) sParticle_t;
+
+  /*
+    LED Pulse Amplitude(0x0C–0x0D) (pg 20)
+    * ------------------------------------------------------------------------------------------
+    * |    b7    |    b6    |    b5    |    b4    |    b3    |    b2    |    b1     |    b0    |
+    * ------------------------------------------------------------------------------------------
+    * |                                         LED1_PA                                        |
+    * ------------------------------------------------------------------------------------------
+    * ------------------------------------------------------------------------------------------
+    * |    b7    |    b6    |    b5    |    b4    |    b3    |    b2    |    b1     |    b0    |
+    * ------------------------------------------------------------------------------------------
+    * |                                         LED2_PA                                        |
+    * ------------------------------------------------------------------------------------------
+  */
+  /*
+    Multi-LED Mode Control Registers(0x011) (pg 21)
+    * ------------------------------------------------------------------------------------------
+    * |    b7    |    b6    |    b5    |    b4    |    b3    |    b2    |    b1     |    b0    |
+    * ------------------------------------------------------------------------------------------
+    * |   NONE   |              SLOT2             |   NONE   |             SLOT1               |
+    * ------------------------------------------------------------------------------------------
+  */
+  typedef struct {
+    uint8_t   SLOT1:4;
+    uint8_t   SLOT2:4;
+  } __attribute__ ((packed)) sMultiLED_t;
 
 /*
 FIFO Configuration(0x08) (pg 17)

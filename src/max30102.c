@@ -26,6 +26,9 @@ void setFIFOAverage(struct device *i2c_dev, uint8_t samples);
 void max30102_setADCRange(struct device *i2c_dev, uint8_t adcRange);
 void max30102_setSampleRate(struct device *i2c_dev, uint8_t sampleRate);
 void max30102_setPulseWidth(struct device *i2c_dev, uint8_t pulseWidth);
+void max30102_setPulseAmplitudeRed(struct device *i2c_dev, uint8_t amplitude);
+void max30102_setPulseAmplitudeIR(struct device *i2c_dev, uint8_t amplitude);
+void max30102_enableSlot(struct device *i2c_dev, uint8_t slotNumber, uint8_t device);
 
 // utility methods
 uint8_t max30102_readReg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size);
@@ -76,11 +79,11 @@ void max30102_sensorConfiguration(struct device *i2c_dev, uint8_t ledBrightness,
 
   max30102_setPulseWidth(i2c_dev, pulseWidth);
 
-  setPulseAmplitudeRed(ledBrightness);
-  setPulseAmplitudeIR(ledBrightness);
+  max30102_setPulseAmplitudeRed(i2c_dev, ledBrightness);
+  max30102_setPulseAmplitudeIR(i2c_dev, ledBrightness);
 
-  enableSlot(1, SLOT_RED_LED);
-  if (ledMode > MODE_REDONLY) enableSlot(2, SLOT_IR_LED);
+  max30102_enableSlot(i2c_dev, 1, SLOT_RED_LED);
+  if (ledMode > MODE_REDONLY) max30102_enableSlot(i2c_dev, 2, SLOT_IR_LED);
 
   setLEDMode(ledMode);
 
@@ -124,6 +127,37 @@ void max30102_setPulseWidth(struct device *i2c_dev, uint8_t pulseWidth)
   max30102_readReg(i2c_dev, MAX30102_PARTICLECONFIG, &particleReg, 1);
   particleReg.pulseWidth = pulseWidth;
   max30102_writeReg(i2c_dev, MAX30102_PARTICLECONFIG, &particleReg, 1);
+}
+
+void max30102_setPulseAmplitudeRed(struct device *i2c_dev, uint8_t amplitude)
+{
+  uint8_t byteTemp = amplitude;
+  max30102_writeReg(i2c_dev, MAX30102_LED1_PULSEAMP, &byteTemp, 1);
+}
+
+void max30102_setPulseAmplitudeIR(struct device *i2c_dev, uint8_t amplitude)
+{
+  uint8_t byteTemp = amplitude;
+  max30102_writeReg(i2c_dev, MAX30102_LED2_PULSEAMP, &byteTemp, 1);
+}
+
+void max30102_enableSlot(struct device *i2c_dev, uint8_t slotNumber, uint8_t device)
+{
+  sMultiLED_t multiLEDReg;
+  switch (slotNumber) {
+  case (1):
+    max30102_readReg(i2c_dev, MAX30102_MULTILEDCONFIG1, &multiLEDReg, 1);
+    multiLEDReg.SLOT1 = device;
+    max30102_writeReg(i2c_dev, MAX30102_MULTILEDCONFIG1, &multiLEDReg, 1);
+    break;
+  case (2):
+    max30102_readReg(i2c_dev, MAX30102_MULTILEDCONFIG1, &multiLEDReg, 1);
+    multiLEDReg.SLOT2 = device;
+    max30102_writeReg(i2c_dev, MAX30102_MULTILEDCONFIG1, &multiLEDReg, 1);
+    break;
+  default:
+    break;
+  }
 }
 
 // Utilities
