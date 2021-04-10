@@ -14,6 +14,7 @@ Using stuff from the the Arduino C++ Library for the MAX30102
 //Configuraion Registers
 #define MAX30102_FIFOCONFIG 0x08 //FIFO Configuration
 #define MAX30102_MODECONFIG 0x09 //Mode Configuration
+#define MAX30102_PARTICLECONFIG 0x0A //SpO2 Configuration
 
 //Part ID Registers
 #define MAX30102_REVISIONID 0xFE //Revision ID
@@ -34,19 +35,33 @@ uint8_t   reset:1; /*!< 1:reset */
 uint8_t   shutDown:1; /*!< 0: wake up 1: put IC into low power mode*/
 } __attribute__ ((packed)) sMode_t;
 
-  /*
-    FIFO Configuration(0x08) (pg 17)
-    * ------------------------------------------------------------------------------------------
-    * |    b7    |    b6    |    b5    |    b4          | b3 |    b2    |    b1     |    b0    |
-    * ------------------------------------------------------------------------------------------
-    * |            SMP_AVE             |FIFO_ROLLOVER_EN|               FIFO_A_FULL            |
-    * ------------------------------------------------------------------------------------------
-  */
-  typedef struct {
-    uint8_t   almostFull:4; // FIFO Almost Full Value
-    uint8_t   RollOver:1;   // FIFO Rolls on Full
-    uint8_t   sampleAverag:3;  // Sample Averaging
-  } __attribute__ ((packed)) sFIFO_t;
+/*
+Particle sensing configuration(0x0A) (pg 18)
+* ------------------------------------------------------------------------------------------
+* |    b7    |    b6    |    b5    |    b4    |    b3    |    b2    |    b1     |    b0    |
+* ------------------------------------------------------------------------------------------
+* |   NONE   |     SPO2_ADC_RGE    |             SPO2_SR            |        LED_PW        |
+* ------------------------------------------------------------------------------------------
+*/
+typedef struct {
+uint8_t   pulseWidth:2;
+uint8_t   sampleRate:3;
+uint8_t   adcRange:3;
+} __attribute__ ((packed)) sParticle_t;
+
+/*
+FIFO Configuration(0x08) (pg 17)
+* ------------------------------------------------------------------------------------------
+* |    b7    |    b6    |    b5    |    b4          | b3 |    b2    |    b1     |    b0    |
+* ------------------------------------------------------------------------------------------
+* |            SMP_AVE             |FIFO_ROLLOVER_EN|               FIFO_A_FULL            |
+* ------------------------------------------------------------------------------------------
+*/
+typedef struct {
+uint8_t   almostFull:4; // FIFO Almost Full Value
+uint8_t   RollOver:1;   // FIFO Rolls on Full
+uint8_t   sampleAverag:3;  // Sample Averaging
+} __attribute__ ((packed)) sFIFO_t;
 
 // Class Level defines
 //Configuration Options 

@@ -23,6 +23,9 @@ uint8_t get_max30102_part_id(struct device *i2c_dev);
 void max30102_softReset(struct device *i2c_dev);
 void max30102_sensorConfiguration(struct device *i2c_dev, uint8_t ledBrightness, uint8_t sampleAverage, uint8_t ledMode, uint8_t sampleRate, uint8_t pulseWidth, uint8_t adcRange);
 void setFIFOAverage(struct device *i2c_dev, uint8_t samples);
+void max30102_setADCRange(struct device *i2c_dev, uint8_t adcRange);
+void max30102_setSampleRate(struct device *i2c_dev, uint8_t sampleRate);
+void max30102_setPulseWidth(struct device *i2c_dev, uint8_t pulseWidth);
 
 // utility methods
 uint8_t max30102_readReg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size);
@@ -67,11 +70,11 @@ void max30102_sensorConfiguration(struct device *i2c_dev, uint8_t ledBrightness,
 {
   max30102_setFIFOAverage(i2c_dev, sampleAverage);
 
-  setADCRange(adcRange);
+  max30102_setADCRange(i2c_dev, adcRange);
 
-  setSampleRate(sampleRate);
+  max30102_setSampleRate(i2c_dev, sampleRate);
 
-  setPulseWidth(pulseWidth);
+  max30102_setPulseWidth(i2c_dev, pulseWidth);
 
   setPulseAmplitudeRed(ledBrightness);
   setPulseAmplitudeIR(ledBrightness);
@@ -97,6 +100,30 @@ void max30102_setFIFOAverage(struct device *i2c_dev, uint8_t numberOfSamples)
   max30102_readReg(i2c_dev, MAX30102_FIFOCONFIG, &FIFOReg, 1);
   FIFOReg.sampleAverag = numberOfSamples;
   max30102_writeReg(i2c_dev, MAX30102_FIFOCONFIG, &FIFOReg, 1);
+}
+
+void max30102_setADCRange(struct device *i2c_dev, uint8_t adcRange)
+{
+  sParticle_t particleReg;
+  max30102_readReg(i2c_dev, MAX30102_PARTICLECONFIG, &particleReg, 1);
+  particleReg.adcRange = adcRange;
+  max30102_writeReg(i2c_dev, MAX30102_PARTICLECONFIG, &particleReg, 1);
+}
+
+void max30102_setSampleRate(struct device *i2c_dev, uint8_t sampleRate)
+{
+  sParticle_t particleReg;
+  max30102_readReg(i2c_dev, MAX30102_PARTICLECONFIG, &particleReg, 1);
+  particleReg.sampleRate = sampleRate;
+  max30102_writeReg(i2c_dev, MAX30102_PARTICLECONFIG, &particleReg, 1);
+}
+
+void max30102_setPulseWidth(struct device *i2c_dev, uint8_t pulseWidth)
+{
+  sParticle_t particleReg;
+  max30102_readReg(i2c_dev, MAX30102_PARTICLECONFIG, &particleReg, 1);
+  particleReg.pulseWidth = pulseWidth;
+  max30102_writeReg(i2c_dev, MAX30102_PARTICLECONFIG, &particleReg, 1);
 }
 
 // Utilities
