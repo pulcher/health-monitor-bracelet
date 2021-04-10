@@ -77,22 +77,23 @@ void main(void)
   	}
 
 	max30102_softReset(i2c_dev);
+        printk("Located MAX30102...\n");
 
-  //Set reasonably to make sure there is clear sawtooth figure on the serial plotter
-  /*!
-   *@brief Use macro definition to configure sensor 
-   *@param ledBrightness LED brightness, default value: 0x1F（6.4mA), Range: 0~255（0=Off, 255=50mA）
-   *@param sampleAverage Average multiple samples then draw once, reduce data throughput, default 4 samples average
-   *@param ledMode LED mode, default to use red light and IR at the same time
-   *@param sampleRate Sampling rate, default 400 samples every second
-   *@param pulseWidth Pulse width: the longer the pulse width, the wider the detection range. Default to be Max range
-   *@param adcRange Measurement Range, default 4096 (nA), 15.63(pA) per LSB
-   */
-  max30102_sensorConfiguration(/*ledBrightness=*/60, /*sampleAverage=*/SAMPLEAVG_8, \
-                                  /*ledMode=*/MODE_MULTILED, /*sampleRate=*/SAMPLERATE_400, \
-                                  /*pulseWidth=*/PULSEWIDTH_411, /*adcRange=*/ADCRANGE_16384);
+        //Set reasonably to make sure there is clear sawtooth figure on the serial plotter
+        /*!
+         *@brief Use macro definition to configure sensor 
+         *@param ledBrightness LED brightness, default value: 0x1F（6.4mA), Range: 0~255（0=Off, 255=50mA）
+         *@param sampleAverage Average multiple samples then draw once, reduce data throughput, default 4 samples average
+         *@param ledMode LED mode, default to use red light and IR at the same time
+         *@param sampleRate Sampling rate, default 400 samples every second
+         *@param pulseWidth Pulse width: the longer the pulse width, the wider the detection range. Default to be Max range
+         *@param adcRange Measurement Range, default 4096 (nA), 15.63(pA) per LSB
+         */
+        max30102_sensorConfiguration(/*ledBrightness=*/60, /*sampleAverage=*/SAMPLEAVG_8, \
+                                        /*ledMode=*/MODE_MULTILED, /*sampleRate=*/SAMPLERATE_400, \
+                                        /*pulseWidth=*/PULSEWIDTH_411, /*adcRange=*/ADCRANGE_16384);
 
-	printk("Located MAX30102...\n");
+	printk("Cionfigured MAX30102...\n");
 
 
 	uint8_t error = 0u;
