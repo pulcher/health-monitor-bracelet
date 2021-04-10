@@ -30,6 +30,7 @@ void max30102_setPulseWidth(struct device *i2c_dev, uint8_t pulseWidth);
 void max30102_setPulseAmplitudeRed(struct device *i2c_dev, uint8_t amplitude);
 void max30102_setPulseAmplitudeIR(struct device *i2c_dev, uint8_t amplitude);
 void max30102_enableSlot(struct device *i2c_dev, uint8_t slotNumber, uint8_t device);
+void max30102_enableFIFORollover(struct device *i2c_dev);
 
 // utility methods
 uint8_t max30102_readReg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size);
@@ -94,7 +95,7 @@ void max30102_sensorConfiguration(struct device *i2c_dev, uint8_t ledBrightness,
     _activeLEDs = 2;
   }
 
-  enableFIFORollover(); 
+  max30102_enableFIFORollover(i2c_dev); 
   resetFIFO(); 
 }
 
@@ -167,6 +168,14 @@ void max30102_enableSlot(struct device *i2c_dev, uint8_t slotNumber, uint8_t dev
   default:
     break;
   }
+}
+
+void max30102_enableFIFORollover(struct device *i2c_dev)
+{
+  sFIFO_t FIFOReg;
+  max30102_readReg(i2c_dev, MAX30102_FIFOCONFIG, &FIFOReg, 1);
+  FIFOReg.RollOver = 1;
+  max30102_writeReg(i2c_dev, MAX30102_FIFOCONFIG, &FIFOReg, 1);
 }
 
 // Utilities
