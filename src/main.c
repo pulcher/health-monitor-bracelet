@@ -118,6 +118,8 @@ void main(void)
 
 		printk("Scanning...\n");
 
+		max30102_getIR(i2c_dev);
+
 		k_sleep(K_MSEC(3000));
 	}
 }

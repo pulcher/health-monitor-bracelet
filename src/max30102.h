@@ -31,6 +31,8 @@ Using stuff from the the Arduino C++ Library for the MAX30102
 #define MAX30102_PARTID 0xFF //Part ID:0x15
 #define MAX30102_EXPECTED_PARTID 0x15
 
+#define MAX30102_SENSE_BUF_SIZE  30
+
 /*
 Mode configuration(0x09) (pg 18)
 * ------------------------------------------------------------------------------------------
@@ -99,6 +101,16 @@ uint8_t   RollOver:1;   // FIFO Rolls on Full
 uint8_t   sampleAverag:3;  // Sample Averaging
 } __attribute__ ((packed)) sFIFO_t;
 
+/*
+* Circular buffer for storing samples 
+*/
+typedef struct {
+    uint32_t red[MAX30102_SENSE_BUF_SIZE];
+    uint32_t IR[MAX30102_SENSE_BUF_SIZE];
+    uint8_t head;
+    uint8_t tail;
+} sSenseBuf_t;
+
 // Class Level defines
 //Configuration Options 
 //FIFO Configuration(Register address 0x08)
@@ -141,7 +153,6 @@ uint8_t   sampleAverag:3;  // Sample Averaging
 #define SLOT_NONE       0
 #define SLOT_RED_LED    1
 #define SLOT_IR_LED     2
-#endif
 
 // access methods
 bool is_max30102_available(struct device *i2c_dev);
@@ -160,8 +171,18 @@ void max30102_setPulseAmplitudeIR(struct device *i2c_dev, uint8_t amplitude);
 void max30102_enableSlot(struct device *i2c_dev, uint8_t slotNumber, uint8_t device);
 void max30102_enableFIFORollover(struct device *i2c_dev);
 void max30102_resetFIFO(struct device *i2c_dev);
+uint8_t max30102_getWritePointer(struct device *i2c_dev);
+uint8_t max30102_getReadPointer(struct device *i2c_dev);
+
+// get info
+uint32_t max30102_getIR(struct device *i2c_dev);
+void max30102_getNewData(struct device *i2c_dev);
 
 // utility methods
 uint8_t max30102_readReg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size);
 int max30102_writeReg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size);
-uint8_t max30102_write_read_reg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size);
+uint8_t max30102_write_read_reg(struct device *i2c_dev, uint8_t reg, void* pBuf, uint8_t size);
+
+//#define DBG(...) {printk("[");printk(__FUNCTION__); printk("(): "); printk(__LINE__); printk(" ] "); printk(__VA_ARGS__); printk("\n");}
+
+#endif

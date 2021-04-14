@@ -14,6 +14,7 @@ struct i2c_msg msgs[1];
 uint8_t dst = 1;
 uint8_t error = -1;
 uint8_t _activeLEDs;
+sSenseBuf_t senseBuf;
 
 bool is_max30102_available(struct device *i2c_dev) {
 
@@ -169,6 +170,88 @@ void max30102_resetFIFO(struct device *i2c_dev)
   max30102_writeReg(i2c_dev, MAX30102_FIFOREADPTR, &byteTemp, 1);
 }
 
+uint8_t max30102_getWritePointer(struct device *i2c_dev)
+{
+  uint8_t byteTemp;
+  max30102_readReg(i2c_dev, MAX30102_FIFOWRITEPTR, &byteTemp, 1);
+  return byteTemp;
+}
+
+uint8_t max30102_getReadPointer(struct device *i2c_dev)
+{
+  uint8_t byteTemp;
+  max30102_readReg(i2c_dev, MAX30102_FIFOREADPTR, &byteTemp, 1);
+  return byteTemp;
+}
+
+// get info
+uint32_t max30102_getIR(struct device *i2c_dev)
+{
+  max30102_getNewData(i2c_dev);
+  return (senseBuf.IR[senseBuf.head]);
+}
+
+void max30102_getNewData(struct device *i2c_dev)
+{
+  int32_t numberOfSamples = 0;
+  uint8_t readPointer = 0;
+  uint8_t writePointer = 0;
+  while (1) {
+    readPointer = max30102_getReadPointer(i2c_dev);
+    writePointer = max30102_getWritePointer(i2c_dev);
+
+    if (readPointer == writePointer) {
+      printk("no data");
+    } else {
+      numberOfSamples = writePointer - readPointer;
+      if (numberOfSamples < 0) numberOfSamples += 32;
+      int32_t bytesNeedToRead = numberOfSamples * _activeLEDs * 3;
+   
+        while (bytesNeedToRead > 0) {
+          senseBuf.head++;
+          senseBuf.head %= MAX30102_SENSE_BUF_SIZE;
+          uint32_t tempBuf = 0;
+          if (_activeLEDs > 1) { 
+            uint8_t temp[6];
+            uint8_t tempex;
+
+            max30102_readReg(i2c_dev, MAX30102_FIFODATA, temp, 6);
+
+            for(uint8_t i = 0; i < 3; i++){
+              tempex = temp[i];
+              temp[i] = temp[5-i];
+              temp[5-i] = tempex;
+            }
+
+            memcpy(&tempBuf, temp, 3*sizeof(temp[0]));
+            tempBuf &= 0x3FFFF;
+            senseBuf.IR[senseBuf.head] = tempBuf;
+            memcpy(&tempBuf, temp+3, 3*sizeof(temp[0]));
+            tempBuf &= 0x3FFFF;
+            senseBuf.red[senseBuf.head] = tempBuf;
+          } else { 
+            uint8_t temp[3];
+            uint8_t tempex;
+
+       
+            max30102_readReg(i2c_dev, MAX30102_FIFODATA, temp, 3);
+            tempex = temp[0];
+            temp[0] = temp[2];
+            temp[2] = tempex;
+
+            memcpy(&tempBuf, temp, 3*sizeof(temp[0]));
+            tempBuf &= 0x3FFFF;
+            senseBuf.red[senseBuf.head] = tempBuf;
+          }
+          bytesNeedToRead -= _activeLEDs * 3;
+        }
+      return;
+    }
+    k_sleep(K_MSEC(1));
+  }
+}
+
+
 // Utilities
 uint8_t max30102_readReg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size)
 {
@@ -181,7 +264,7 @@ int max30102_writeReg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uin
 }
 
 
-uint8_t max30102_write_read_reg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size)
+uint8_t max30102_write_read_reg(struct device *i2c_dev, uint8_t reg, void* pBuf, uint8_t size)
 {
     int error;
     error = i2c_write_read(i2c_dev, MAX30102_IIC_ADDRESS, &reg, 1, pBuf, size);
