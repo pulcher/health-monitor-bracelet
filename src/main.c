@@ -15,7 +15,7 @@
 #include <drivers/i2c.h>
 #include "max30102.h"
 
-
+#define CONFIG_EXTRA_EXCEPTION_INFO
 #define LOG_LEVEL CONFIG_LOG_DEFAULT_LEVEL
 #include <logging/log.h>
 LOG_MODULE_REGISTER(app);
@@ -72,8 +72,8 @@ void main(void)
 	}
 
   	if (get_max30102_part_id(i2c_dev) != MAX30102_EXPECTED_PARTID) {
-    	printk("not expected partid");
-    	return;
+          printk("not expected partid");
+          return;
   	}
 
 	max30102_softReset(i2c_dev);
@@ -89,7 +89,7 @@ void main(void)
          *@param pulseWidth Pulse width: the longer the pulse width, the wider the detection range. Default to be Max range
          *@param adcRange Measurement Range, default 4096 (nA), 15.63(pA) per LSB
          */
-        max30102_sensorConfiguration(/*ledBrightness=*/60, /*sampleAverage=*/SAMPLEAVG_8, \
+        max30102_sensorConfiguration(i2c_dev, /*ledBrightness=*/60, /*sampleAverage=*/SAMPLEAVG_8, \
                                         /*ledMode=*/MODE_MULTILED, /*sampleRate=*/SAMPLERATE_400, \
                                         /*pulseWidth=*/PULSEWIDTH_411, /*adcRange=*/ADCRANGE_16384);
 
@@ -113,47 +113,11 @@ void main(void)
 	gui_set_bt_state(GUI_BT_STATE_ADVERTISING);
 
 	while (1) {
-          uint8_t error;
-          int nDevices;
- 
- /*         printk("Scanning...\n");
- 
-          nDevices = 0;
-          for(uint16_t address = 80; address < 90; address++ ) 
-          {
-            struct i2c_msg msgs[1];
-            uint8_t dst = 1;
+		uint8_t error;
+		int nDevices;
 
-            msgs[0].buf = &dst;
-            msgs[0].len = 1U;
-            msgs[0].flags = I2C_MSG_WRITE | I2C_MSG_STOP;
+		printk("Scanning...\n");
 
-            error = i2c_transfer(i2c_dev, &msgs[0], 1, address);
-            printk("Target Address: %x(%d), Error Code: %d, ", address, address, error);
-            if (error == 0)
-            {
-              printk("I2C device found at address 0x");
-              if (address<16) 
-                printk("0");
-              printk("%x",address);
- 
-              nDevices++;
-            }
-            /*else if (error==4) 
-            {
-              printk("Unknow error at address 0x");
-              if (address<16) 
-                printk("0");
-              printk(address);
-            }    */
- /*           printk("  !\n");
-          }
-          
-          if (nDevices == 0)
-            printk("No I2C devices found\n");
-          else
-            printk("done\n");
- */
-          k_sleep(K_MSEC(3000));
+		k_sleep(K_MSEC(3000));
 	}
 }

@@ -15,29 +15,6 @@ uint8_t dst = 1;
 uint8_t error = -1;
 uint8_t _activeLEDs;
 
-// access methods
-bool is_max30102_available(struct device *i2c_dev);
-uint8_t get_max30102_part_id(struct device *i2c_dev);
-
-// confiuration methods
-void max30102_softReset(struct device *i2c_dev);
-void max30102_sensorConfiguration(struct device *i2c_dev, uint8_t ledBrightness, uint8_t sampleAverage, uint8_t ledMode, uint8_t sampleRate, uint8_t pulseWidth, uint8_t adcRange);
-void max30102_setLEDMode(struct device *i2c_dev, uint8_t ledMode);
-void setFIFOAverage(struct device *i2c_dev, uint8_t samples);
-void max30102_setADCRange(struct device *i2c_dev, uint8_t adcRange);
-void max30102_setSampleRate(struct device *i2c_dev, uint8_t sampleRate);
-void max30102_setPulseWidth(struct device *i2c_dev, uint8_t pulseWidth);
-void max30102_setPulseAmplitudeRed(struct device *i2c_dev, uint8_t amplitude);
-void max30102_setPulseAmplitudeIR(struct device *i2c_dev, uint8_t amplitude);
-void max30102_enableSlot(struct device *i2c_dev, uint8_t slotNumber, uint8_t device);
-void max30102_enableFIFORollover(struct device *i2c_dev);
-void max30102_resetFIFO(struct device *i2c_dev);
-
-// utility methods
-uint8_t max30102_readReg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size);
-int max30102_writeReg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size);
-uint8_t max30102_write_read_reg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size);
-
 bool is_max30102_available(struct device *i2c_dev) {
 
     msgs[0].buf = &dst;
@@ -51,8 +28,12 @@ bool is_max30102_available(struct device *i2c_dev) {
 
 uint8_t get_max30102_part_id(struct device *i2c_dev)
 {
-  uint8_t byteTemp, error;
+  uint8_t byteTemp, revisionId, error;
   error = max30102_write_read_reg(i2c_dev, MAX30102_PARTID, &byteTemp, 1);
+  printk("Found part id: %x\n", byteTemp);
+
+  error = max30102_write_read_reg(i2c_dev, MAX30102_REVISION_ID, &revisionId, 1);
+  printk("Found revision id: %x\n", revisionId);
   return byteTemp;
 }
 
@@ -73,7 +54,8 @@ void max30102_softReset(struct device *i2c_dev)
 void max30102_sensorConfiguration(struct device *i2c_dev, uint8_t ledBrightness, uint8_t sampleAverage,
                                   uint8_t ledMode, uint8_t sampleRate, uint8_t pulseWidth,
                                   uint8_t adcRange)
-{/*
+{
+
   max30102_setFIFOAverage(i2c_dev, sampleAverage);
 
   max30102_setADCRange(i2c_dev, adcRange);
@@ -98,13 +80,12 @@ void max30102_sensorConfiguration(struct device *i2c_dev, uint8_t ledBrightness,
 
   max30102_enableFIFORollover(i2c_dev); 
   max30102_resetFIFO(i2c_dev); 
-  */
 }
 
 void max30102_setLEDMode(struct device *i2c_dev, uint8_t ledMode)
 {
   sMode_t modeReg;
-  max30102_readReg(i2c_dev, MAX30102_MODECONFIG, &modeReg, 1);
+  max30102_write_read_reg(i2c_dev, MAX30102_MODECONFIG, &modeReg, 1);
   modeReg.ledMode = ledMode;
   max30102_writeReg(i2c_dev, MAX30102_MODECONFIG, &modeReg, 1);
 }

@@ -27,6 +27,7 @@ Using stuff from the the Arduino C++ Library for the MAX30102
 
 //Part ID Registers
 #define MAX30102_REVISIONID 0xFE //Revision ID
+#define MAX30102_REVISION_ID 0xFE
 #define MAX30102_PARTID 0xFF //Part ID:0x15
 #define MAX30102_EXPECTED_PARTID 0x15
 
@@ -141,3 +142,26 @@ uint8_t   sampleAverag:3;  // Sample Averaging
 #define SLOT_RED_LED    1
 #define SLOT_IR_LED     2
 #endif
+
+// access methods
+bool is_max30102_available(struct device *i2c_dev);
+uint8_t get_max30102_part_id(struct device *i2c_dev);
+
+// confiuration methods
+void max30102_softReset(struct device *i2c_dev);
+void max30102_sensorConfiguration(struct device *i2c_dev, uint8_t ledBrightness, uint8_t sampleAverage, uint8_t ledMode, uint8_t sampleRate, uint8_t pulseWidth, uint8_t adcRange);
+void max30102_setLEDMode(struct device *i2c_dev, uint8_t ledMode);
+void max30102_setFIFOAverage(struct device *i2c_dev, uint8_t samples);
+void max30102_setADCRange(struct device *i2c_dev, uint8_t adcRange);
+void max30102_setSampleRate(struct device *i2c_dev, uint8_t sampleRate);
+void max30102_setPulseWidth(struct device *i2c_dev, uint8_t pulseWidth);
+void max30102_setPulseAmplitudeRed(struct device *i2c_dev, uint8_t amplitude);
+void max30102_setPulseAmplitudeIR(struct device *i2c_dev, uint8_t amplitude);
+void max30102_enableSlot(struct device *i2c_dev, uint8_t slotNumber, uint8_t device);
+void max30102_enableFIFORollover(struct device *i2c_dev);
+void max30102_resetFIFO(struct device *i2c_dev);
+
+// utility methods
+uint8_t max30102_readReg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size);
+int max30102_writeReg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size);
+uint8_t max30102_write_read_reg(struct device *i2c_dev, uint8_t reg, const void* pBuf, uint8_t size);
