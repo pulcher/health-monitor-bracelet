@@ -174,6 +174,7 @@ uint8_t max30102_getWritePointer(struct device *i2c_dev)
 {
   uint8_t byteTemp;
   max30102_readReg(i2c_dev, MAX30102_FIFOWRITEPTR, &byteTemp, 1);
+  printk("max30102_getWritePointer: %d\n", byteTemp);
   return byteTemp;
 }
 
@@ -181,6 +182,7 @@ uint8_t max30102_getReadPointer(struct device *i2c_dev)
 {
   uint8_t byteTemp;
   max30102_readReg(i2c_dev, MAX30102_FIFOREADPTR, &byteTemp, 1);
+  printk("max30102_getReadPointer: %d\n", byteTemp);
   return byteTemp;
 }
 
@@ -201,7 +203,7 @@ void max30102_getNewData(struct device *i2c_dev)
     writePointer = max30102_getWritePointer(i2c_dev);
 
     if (readPointer == writePointer) {
-      printk("no data");
+      printk("...no data...");
     } else {
       numberOfSamples = writePointer - readPointer;
       if (numberOfSamples < 0) numberOfSamples += 32;
