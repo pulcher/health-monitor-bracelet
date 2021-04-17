@@ -65,7 +65,7 @@ void main(void)
 		printk("I2C: Device driver not found.\n");
 		return;
 	}
-
+/*
 	if (!is_max30102_available(i2c_dev)) {
 		printk("I2C: MAX30102 not found.\n");
 		return;          
@@ -89,13 +89,13 @@ void main(void)
          *@param pulseWidth Pulse width: the longer the pulse width, the wider the detection range. Default to be Max range
          *@param adcRange Measurement Range, default 4096 (nA), 15.63(pA) per LSB
          */
-        max30102_sensorConfiguration(i2c_dev, /*ledBrightness=*/60, /*sampleAverage=*/SAMPLEAVG_8, \
-                                        /*ledMode=*/MODE_MULTILED, /*sampleRate=*/SAMPLERATE_400, \
-                                        /*pulseWidth=*/PULSEWIDTH_411, /*adcRange=*/ADCRANGE_16384);
+     /*   max30102_sensorConfiguration(i2c_dev, 60, SAMPLEAVG_8, \
+                                        MODE_MULTILED, SAMPLERATE_400, \
+                                        PULSEWIDTH_411, ADCRANGE_16384);
 
-	printk("Cionfigured MAX30102...\n");
+	/* printk("Cionfigured MAX30102...\n");
 
-
+        */
 	uint8_t error = 0u;
 
 	i2c_configure(i2c_dev, I2C_SPEED_SET(I2C_SPEED_STANDARD));
@@ -118,7 +118,7 @@ void main(void)
 
 		printk("Scanning...\n");
 
-		max30102_getIR(i2c_dev);
+		//max30102_getIR(i2c_dev);
 
 		k_sleep(K_MSEC(3000));
 	}

@@ -249,7 +249,7 @@ void max30102_getNewData(struct device *i2c_dev)
         }
       return;
     }
-    k_sleep(K_MSEC(1));
+    k_sleep(K_MSEC(1000));
   }
 }
 
